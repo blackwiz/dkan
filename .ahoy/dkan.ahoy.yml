@@ -79,6 +79,7 @@ commands:
         rm -rf "docroot/profiles/dkan/modules/dkan/$MODULE";
       fi
       ln -s ../../../$MODULE docroot/profiles/dkan/modules/dkan && echo "Symlink created for $MODULE.. "
+
   module-make:
     usage: Run drush make for a module in dkan/modules/dkan/.
     cmd: |
@@ -95,6 +96,7 @@ commands:
         exit 1
       fi
       ahoy drush -y make --no-core --contrib-destination=dkan dkan/modules/dkan/{{args}}/{{args}}.make --no-recursion --no-cache --verbose --working-copy
+
   test:
     usage: Run the tests for dkan.
     cmd: |
@@ -126,9 +128,33 @@ commands:
         echo "Using behat.yml .."
       fi
       ahoy cmd-proxy "cd $BEHAT_FOLDER && bin/behat $CONFIG ${ARGS[@]}"
+
+  dkanextension-update:
+    usage: Update the nucivic/dkanextension composer package.
+    cmd: ahoy cmd-proxy 'cd dkan/test && composer update nucivic/dkanextension'
+
   sqlc:
     usage: Abstracted way to connect to the mysql database.
     cmd: |
       # Grab the sql string and ignore stdin so it can be used later.
       ahoy cmd-proxy "$(ahoy drush sql-connect < /dev/null)"
 
+  self-update:
+    usage: Update dkan-ahoy
+    cmd: |
+      set -e
+      rm -fR dkan-ahoy
+      rm -fR dkan/.ahoy
+      rm dkan/dkan-init.sh
+      git clone 'git@github.com:nucivic/dkan' --depth=1 dkan-ahoy
+      cp -r dkan-ahoy/.ahoy dkan/
+      cp dkan-ahoy/dkan-init.sh  dkan/
+      cp dkan-ahoy/test/behat.docker.yml dkan/test/
+      cp dkan-ahoy/test/behat.circleci.yml dkan/test/
+      rm -fR dkan-ahoy
+    hide: true
+
+  theme:
+    usage: A series of commands for dkan theme development
+    import: dkan/.ahoy/theme.ahoy.yml
+    hide: true
