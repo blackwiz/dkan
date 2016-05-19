@@ -152,7 +152,7 @@ function dkan_sitewide_demo_front_views_post_execute(&$view) {
 /**
  * Implement hook_ctools_plugin_api().
  */
-function panels_import_ctools_plugin_api($module, $api) {
+function dkan_sitewide_demo_front_ctools_plugin_api($module, $api) {
   if (($module == 'page_manager' && $api == 'pages_default')
     || ($module == 'panels_mini' && $api == 'panels_default')) {
     return array('version' => 1);
@@ -164,6 +164,13 @@ function panels_import_ctools_plugin_api($module, $api) {
  */
 function dkan_sitewide_demo_front_default_page_manager_pages() {
   return _dkan_sitewide_demo_front_load_defaults('page_manager', 'pages', 'page');
+}
+
+/**
+ * Implements hook_default_page_manager_handlers().
+ */
+function dkan_sitewide_demo_front_default_page_manager_handlers() {
+  return _dkan_sitewide_demo_front_load_defaults('page_manager', 'handlers', 'handler');
 }
 
 /**
