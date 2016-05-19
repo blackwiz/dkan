@@ -148,3 +148,76 @@ function dkan_sitewide_demo_front_views_post_execute(&$view) {
     $view->attachment_after = $group_nodes;
   }
 }
+
+/**
+ * Implement hook_ctools_plugin_api().
+ */
+function panels_import_ctools_plugin_api($module, $api) {
+  if (($module == 'page_manager' && $api == 'pages_default')
+    || ($module == 'panels_mini' && $api == 'panels_default')) {
+    return array('version' => 1);
+  }
+}
+
+/**
+ * Implements hook_default_page_manager_pages().
+ */
+function dkan_sitewide_demo_front_default_page_manager_pages() {
+  return _dkan_sitewide_demo_front_load_defaults('page_manager', 'pages', 'page');
+}
+
+/**
+ * Scans folder for files with ctools/panels default objects.
+ *
+ * @param string $module
+ *   Name of module.
+ * @param string $subfolder
+ *   Name of subfolder to scan.
+ * @param string $variable
+ *   Primary object variable to add to array.
+ *   For example, 'page' for files starting with "$page = new stdClass".
+ *
+ * @return mixed
+ *   Exported object or NULL.
+ */
+function _dkan_sitewide_demo_front_load_defaults($module, $subfolder, $variable) {
+  $imports_dir = 'profiles/dkan/modules/dkan/dkan_sitewide/modules/dkan_sitewide_demo_front/imports';
+
+  $folder = "$imports_dir/$module/$subfolder";
+  $files = file_scan_directory($folder, '/\.inc$/', array('recurse' => FALSE));
+
+  $objects = array();
+  foreach ($files as $file) {
+    $object = _dkan_sitewide_demo_front_fetch_default($file->uri, $variable);
+    if ($object) {
+      $objects[$object->name] = $object;
+    }
+  }
+
+  if (!empty($objects)) {
+    return $objects;
+  }
+}
+
+/**
+ * Includes file and returns object or NULL if file don't have an exported
+ * object.
+ * 
+ * @param string $filename
+ * @param string $variable
+ *   Primary object variable to add to array.
+ *   For example, 'page' for files starting with "$page = new stdClass".
+ *
+ * @return mixed
+ *   Exported object or NULL.
+ */
+function _dkan_sitewide_demo_front_fetch_default($uri, $variable) {
+  ${$variable} = NULL;
+  include $uri;
+  if (${$variable} && ${$variable}->name) {
+    return ${$variable};
+  }
+  else {
+    return NULL;
+  }
+}
