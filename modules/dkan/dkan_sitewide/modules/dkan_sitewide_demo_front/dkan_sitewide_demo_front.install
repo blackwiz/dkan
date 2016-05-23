@@ -12,20 +12,3 @@ function dkan_sitewide_demo_front_install() {
   drupal_set_message(t("The Demo Front Page has been installed."));
 }
 
-/**
- * Implements hook_requirements().
- */
-function dkan_sitewide_demo_front_requirements($phase) {
-  $directory = 'profiles/dkan/modules/dkan/dkan_sitewide/modules/dkan_sitewide_demo_front/imports';
-  $requirements = array();
-
-  if (!is_dir($directory)) {
-    $requirements['dkan_sitewide_demo_front'] = array(
-      'title' => t('DKAN Demo Front Page'),
-      'value' => t('The directory %directory does not exist!', array('%directory' => $directory)),
-      'severity' => REQUIREMENT_ERROR,
-    );
-  }
-
-  return $requirements;
-}
