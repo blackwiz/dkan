@@ -1,5 +1,6 @@
 <?php
 function dkan_sitewide_demo_front_default_page_manager_pages() {
+	// begin exported panel.
 	$page = new stdClass();
 	$page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
 	$page->api_version = 1;
@@ -205,4 +206,8 @@ function dkan_sitewide_demo_front_default_page_manager_pages() {
 	$display->title_pane = 'new-e9a59ddf-15b0-4a29-8ef6-ef460ba539e0';
 	$handler->conf['display'] = $display;
 	$page->default_handlers[$handler->name] = $handler;
+
+	$pages['base_page'] = $page;
+
+  return $pages;
 }
